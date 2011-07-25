@@ -8,7 +8,7 @@ For more information on **Rack**, visit http://rack.rubyforge.org.
 
 Checkout the JRack code and cd to that directory.
 
-    git clone git://github.com/florinpatrascu/jrack.git
+    git clone git@github.com:florinpatrascu/jrack.git
     cd jrack
 
     ant dist
