@@ -25,4 +25,5 @@ public interface RackEnvironment {
     public static final String HTTP_KEEP_ALIVE = "HTTP_KEEP_ALIVE";
     public static final String HTTP_VERSION = "HTTP_VERSION";
     public static final String SERVER_PROTOCOL = "SERVER_PROTOCOL";
+    public static final String LOGGER = "LOGGER";
 }

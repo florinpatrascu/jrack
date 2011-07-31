@@ -1,8 +1,8 @@
 package org.jrack;
 
+import org.jrack.logging.JRackLogger;
+import org.jrack.logging.Slf4jLogger;
 import org.jrack.utils.ClassUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -16,31 +16,34 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RackServlet extends HttpServlet {
-    protected static final Logger log = LoggerFactory.getLogger(RackServlet.class);
+    private JRackLogger logger = new Slf4jLogger(RackServlet.class.getName());
     private JRack rack;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
-        //todo add .ru support and proper initialization
+        //todo jrack yaml config file
         String rackClass = config.getInitParameter("rack");
+        //todo user logging
 
         try {
-
             setRack((JRack) ClassUtilities.loadClass(rackClass).newInstance());
-
         } catch (Exception e) {
             throw new ServletException("Cannot load: " + rackClass);
         }
 
-        log.info(String.format("%s; active ....", rackClass));
+        logger.log(String.format("%s; active ....", rackClass));
     }
 
     /**
      * used by servlet container
      */
     public RackServlet() {
+    }
+
+    public RackServlet(JRack rack) {
+        this.rack = rack;
     }
 
     private void processCall(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -86,6 +89,7 @@ public class RackServlet extends HttpServlet {
 
         environment.put(RackEnvironment.HTTP_SERVLET_REQUEST, req);
         environment.put(RackEnvironment.REQUEST, req); //convenience
+        environment.put(RackEnvironment.LOGGER, logger);
         return environment;
     }
 
