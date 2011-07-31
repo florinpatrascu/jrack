@@ -22,8 +22,9 @@ public class JettyUtils {
     protected static final Logger log = LoggerFactory.getLogger(JettyUtils.class);
     public static final String DEFAULT_SERVER_ADDRESS = "127.0.0.1";
 
-    public static void startJettyRack(String host, int port, JRack rack) {
+    public static void start(String host, int port, JRack rack) {
         startJettyServer(host, port, new RackServlet(rack));
+        log.info(String.format("Jetty rack listening on: %s:%d", host, port));
     }
 
     /**
@@ -33,7 +34,7 @@ public class JettyUtils {
      * @param port the port number
      * @param servlet a rack Servlet
      */
-    public static void startJettyServer(String host, int port, RackServlet servlet) {
+    private static void startJettyServer(String host, int port, RackServlet servlet) {
         try {
 
             SelectChannelConnector connector = new SelectChannelConnector();
@@ -55,11 +56,6 @@ public class JettyUtils {
         }
     }
 
-    public static void start(String host, int port, JRack rack) {
-        startJettyRack(host, port, rack);
-        log.info(String.format("Jetty rack listening on: %s:%d", host, port));
-    }
-
     /**
      * run a simple Jetty servlet and test with:
      * curl http://localhost:8080/echo -d 'hello'
@@ -67,6 +63,6 @@ public class JettyUtils {
      * @param args cmd args if any
      */
     public static void main(String[] args) {
-        startJettyRack(DEFAULT_SERVER_ADDRESS, 8080, new EchoRack());
+        start(DEFAULT_SERVER_ADDRESS, 8080, new EchoRack());
     }
 }
