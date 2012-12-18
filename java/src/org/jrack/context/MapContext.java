@@ -23,18 +23,28 @@ public class MapContext<T> implements Context<T> {
 
     @Override
     public Object getObject(String key) {
-        return map.get(key);
+        if (key != null && map != null && map.containsKey(key)) {
+            return map.get(key);
+        } else {
+            return null;
+        }
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public T get(String key) {
-        return (T) map.get(key);
+        if (key != null && map != null && map.containsKey(key)) {
+            return (T) map.get(key);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public Context<T> with(String key, Object value) {
-        map.put(key, value);
+        if (key != null && value != null) {
+            map.put(key, value);
+        }
         return this;
     }
 
@@ -56,7 +66,11 @@ public class MapContext<T> implements Context<T> {
 
     @Override
     public Object remove(String key) {
-        return map.remove(key);
+        Object o = null;
+        if (key != null && map != null && map.containsKey(key)) {
+            o = map.remove(key);
+        }
+        return o;
     }
 
     @Override
