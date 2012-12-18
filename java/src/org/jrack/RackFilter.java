@@ -18,7 +18,6 @@ import java.util.Set;
  * @since $Revision$ (created: 2012-12-17 7:19 PM)
  */
 public class RackFilter implements Filter {
-    private JRackLogger logger = new Slf4jLogger(RackServlet.class.getName());
 
     private FilterConfig filterConfig;
     private ServletContext servletContext;
@@ -78,22 +77,24 @@ public class RackFilter implements Filter {
             }
         } else {
             try {
-                writeResponse(httpResponse, rack.call(getEnvironment(httpRequest)));
+                Context<String> resp = rack.call(rack.getEnvironment(httpRequest));
+                httpResponse.setStatus((Integer) resp.getObject(Rack.MESSAGE_STATUS));
+
+                for (Map.Entry<String, Object> entry : resp) {
+                    if (entry.getKey().startsWith(Rack.HTTP_)) {
+                        httpResponse.setHeader(entry.getKey().substring(Rack.HTTP_.length()),
+                                (String) entry.getValue());
+                    }
+                }
+
+                RackBody body = (RackBody) resp.getObject(Rack.MESSAGE_BODY);
+                //httpResponse.getWriter().print(rackResponse.getResponse());
+                httpResponse.getOutputStream().write(body.getBytes(RackResponse.DEFAULT_ENCODING));
+
             } catch (Exception e) {
                 RackServlet.throwAsError(e);
             }
         }
-    }
-
-    private void writeResponse(HttpServletResponse httpResponse, RackResponse rackResponse) throws IOException {
-        httpResponse.setStatus(rackResponse.getStatus());
-
-        for (String key : rackResponse.getHeaders().keySet()) {
-            httpResponse.setHeader(key, rackResponse.getHeaders().get(key));
-        }
-
-        //httpResponse.getWriter().print(rackResponse.getResponse());
-        httpResponse.getOutputStream().write(rackResponse.getResponse().getBytes(RackResponse.DEFAULT_ENCODING));
     }
 
     /**
@@ -163,33 +164,5 @@ public class RackFilter implements Filter {
      * @param req the HttpServletRequest
      * @return
      */
-    private Map<String, Object> getEnvironment(HttpServletRequest req) {
-        Map<String, Object> environment = new HashMap<String, Object>();
-        environment.put(RackEnvironment.REQUEST_METHOD, req.getMethod());
-        environment.put(RackEnvironment.PATH_INFO, req.getPathInfo());
-        environment.put(RackEnvironment.QUERY_STRING, req.getQueryString());
-        environment.put(RackEnvironment.SERVER_NAME, req.getServerName());
-        environment.put(RackEnvironment.SERVER_PORT, req.getServerPort());
-        environment.put(RackEnvironment.SCRIPT_NAME, req.getServletPath());
 
-        environment.put(RackEnvironment.HTTP_ACCEPT_ENCODING, req.getHeader("Accept-Encoding"));
-        environment.put(RackEnvironment.HTTP_USER_AGENT, req.getHeader("User-Agent"));
-        environment.put(RackEnvironment.HTTP_HOST, req.getHeader("Host"));
-        environment.put(RackEnvironment.HTTP_CONNECTION, req.getHeader("Connection"));
-        environment.put(RackEnvironment.HTTP_ACCEPT, req.getHeader("Accept"));
-        environment.put(RackEnvironment.HTTP_ACCEPT_CHARSET, req.getHeader("Accept-Charset"));
-        environment.put(RackEnvironment.REMOTE_ADDR, req.getRemoteAddr());
-        environment.put(RackEnvironment.REMOTE_HOST, req.getRemoteHost());
-        environment.put(RackEnvironment.REMOTE_USER, req.getRemoteUser());
-        environment.put(RackEnvironment.REQUEST_PATH, req.getRequestURI());
-        environment.put(RackEnvironment.REQUEST_URL, req.getPathTranslated());
-        environment.put(RackEnvironment.HTTP_KEEP_ALIVE, req.getHeader("Keep-Alive"));
-        environment.put(RackEnvironment.HTTP_VERSION, req.getProtocol());
-        environment.put(RackEnvironment.SERVER_PROTOCOL, req.getProtocol());
-
-        environment.put(RackEnvironment.HTTP_SERVLET_REQUEST, req);
-        environment.put(RackEnvironment.REQUEST, req); //convenience
-        environment.put(RackEnvironment.LOGGER, logger);
-        return environment;
-    }
 }

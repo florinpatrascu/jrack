@@ -1,16 +1,15 @@
 import junit.framework.TestCase;
+import org.jrack.Context;
 import org.jrack.JRack;
 import org.jrack.RackEnvironment;
+import org.jrack.context.MapContext;
 import org.jrack.utils.InvokerRack;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class InvokerTest extends TestCase {
     public void testHelloWorld() throws Exception {
-        JRack rack = new InvokerRack("ca.flop.*");
-        Map<String, Object> input = new HashMap<String, Object>();
-        input.put(RackEnvironment.PATH_INFO, "org.jrack.examples.HelloWorldRack");
+        JRack rack = new InvokerRack("org.jrack.*");
+        Context<String> input = new MapContext<String>();
+        input.with(RackEnvironment.PATH_INFO, "org.jrack.examples.HelloWorldRack");
         assertNotNull(rack.call(input));
     }
 
@@ -23,9 +22,10 @@ public class InvokerTest extends TestCase {
 
     private void assertMask(boolean exceptMatch, String mask, String clazz) {
         JRack rack = new InvokerRack(mask);
-        Map<String, Object> input = new HashMap<String, Object>();
-        input.put(RackEnvironment.PATH_INFO, clazz);
+        Context<String> input = new MapContext<String>();
+        input.with(RackEnvironment.PATH_INFO, clazz);
         Exception caught = null;
+
         try {
             rack.call(input);
         } catch (Exception e) {

@@ -48,19 +48,26 @@ public class RackServlet extends HttpServlet {
 
     private void processCall(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
-            RackResponse response = rack.call(getEnvironment(req));
-            writeResponse(resp, response);
+            Context<String> response = rack.call(rack.getEnvironment(req));
+            resp.setStatus((Integer) response.getObject(Rack.MESSAGE_STATUS));
+
+            for (Map.Entry<String, Object> entry : response) {
+                if (entry.getKey().startsWith(Rack.HTTP_)) {
+                    resp.setHeader(entry.getKey().substring(Rack.HTTP_.length()), (String) entry.getValue());
+                }
+            }
+            RackBody body = (RackBody) response.getObject(Rack.MESSAGE_BODY);
+            if (null != body) {
+                // TODO - if type is file, hand it to the server directly, otherwise treat it as a stream
+                // RackBody.Type type = body.getType();
+                for (byte[] bytes : body.getBodyAsBytes()) {
+                    resp.getOutputStream().write(bytes);
+                }
+            }
         } catch (Exception e) {
             RackServlet.throwAsError(e);
         }
-    }
 
-    private void writeResponse(HttpServletResponse resp, RackResponse response) throws IOException {
-        resp.setStatus(response.getStatus());
-        for (String key : response.getHeaders().keySet()) {
-            resp.setHeader(key, response.getHeaders().get(key));
-        }
-        resp.getWriter().print(response.getResponse());
     }
 
     private Map<String, Object> getEnvironment(HttpServletRequest req) {

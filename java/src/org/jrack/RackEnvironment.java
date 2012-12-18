@@ -8,8 +8,10 @@ public interface RackEnvironment {
     public static final String SERVER_NAME = "SERVER_NAME";
     public static final String SERVER_PORT = "SERVER_PORT";
     public static final String HTTP_SERVLET_REQUEST = "HTTP_SERVLET_REQUEST";
-    //shortcut
-    public static final String REQUEST = "REQUEST";
+
+    public static final String REQUEST = "HTTP_SERVLET_REQUEST";
+    public static final String COOKIES = "COOKIES";
+    public static final String SESSION = "HTTP_SERVLET_SESSION";
 
     public static final String HTTP_USER_AGENT = "HTTP_USER_AGENT";
     public static final String HTTP_HOST = "HTTP_HOST";

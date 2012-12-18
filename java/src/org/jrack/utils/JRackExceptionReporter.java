@@ -1,5 +1,6 @@
 package org.jrack.utils;
 
+import org.jrack.Context;
 import org.jrack.JRack;
 import org.jrack.RackResponse;
 import org.jrack.RackResponseUtils;
@@ -7,7 +8,7 @@ import org.jrack.RackResponseUtils;
 import java.util.Arrays;
 import java.util.Map;
 
-public class JRackExceptionReporter implements JRack {
+public class JRackExceptionReporter extends JRack {
     private final JRack rack;
     public static final String ERROR_MESSAGE_HTML = "<html>" +
             "<header>" +
@@ -29,7 +30,7 @@ public class JRackExceptionReporter implements JRack {
 
     }
 
-    public RackResponse call(Map<String, Object> environment) throws Exception {
+    public RackResponse call(Context<String> environment) throws Exception {
         try {
             return rack.call(environment);
 

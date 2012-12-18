@@ -1,12 +1,13 @@
 package org.jrack.utils;
 
+import org.jrack.Context;
 import org.jrack.JRack;
 import org.jrack.RackEnvironment;
 import org.jrack.RackResponse;
 
 import java.util.Map;
 
-public class InvokerRack implements JRack {
+public class InvokerRack extends JRack {
     public static final String DOT = ".";
     public static final String STAR = "*";
     public static final String ESCAPED_DOT = "\\" + DOT;
@@ -19,8 +20,8 @@ public class InvokerRack implements JRack {
     }
 
     @Override
-    public RackResponse call(Map<String, Object> input) throws Exception {
-        String clazz = (String) input.get(RackEnvironment.PATH_INFO);
+    public RackResponse call(Context<String> input) throws Exception {
+        String clazz = input.get(RackEnvironment.PATH_INFO);
         clazz = getClasspathFromUrl(clazz);
         assertValidClass(clazz);
         JRack rack = getRack(clazz);
