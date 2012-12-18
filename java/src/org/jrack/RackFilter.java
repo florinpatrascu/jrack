@@ -92,7 +92,8 @@ public class RackFilter implements Filter {
             httpResponse.setHeader(key, rackResponse.getHeaders().get(key));
         }
 
-        httpResponse.getWriter().print(rackResponse.getResponse());
+        //httpResponse.getWriter().print(rackResponse.getResponse());
+        httpResponse.getOutputStream().write(rackResponse.getResponse().getBytes(RackResponse.DEFAULT_ENCODING));
     }
 
     /**

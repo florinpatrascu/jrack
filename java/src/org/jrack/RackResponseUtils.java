@@ -1,5 +1,6 @@
 package org.jrack;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

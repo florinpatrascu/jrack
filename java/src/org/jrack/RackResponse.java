@@ -1,28 +1,24 @@
 package org.jrack;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.CharBuffer;
 import java.util.Map;
 
 public class RackResponse {
-    private CharSequence response;
+    public static final String DEFAULT_ENCODING = "utf-8";
+
+    private String response;
     private final Map<String, String> headers;
     private int status;
 
+
     public RackResponse(int status, Map<String, String> headers, String response) {
-        this(status, headers, (CharSequence) response);
-    }
-
-    public RackResponse(int status, Map<String, String> headers, char[] byteResponse) {
-        this(status, headers, CharBuffer.wrap(byteResponse));
-    }
-
-    public RackResponse(int status, Map<String, String> headers, CharSequence response) {
         this.status = status;
         this.headers = headers;
         this.response = response;
     }
 
-    public CharSequence getResponse() {
+    public String getResponse() {
         return response;
     }
 
