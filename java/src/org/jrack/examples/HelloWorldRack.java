@@ -10,6 +10,6 @@ import java.util.Map;
 
 public class HelloWorldRack extends JRack {
     public RackResponse call(Context<String> input) {
-        return RackResponseUtils.standardHtml("Hello World");
+        return RackResponseUtils.standardHtml("Hello World! w⦿‿⦿t!");
     }
 }

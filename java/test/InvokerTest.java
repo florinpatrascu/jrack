@@ -1,7 +1,7 @@
 import junit.framework.TestCase;
 import org.jrack.Context;
 import org.jrack.JRack;
-import org.jrack.RackEnvironment;
+import org.jrack.Rack;
 import org.jrack.context.MapContext;
 import org.jrack.utils.InvokerRack;
 
@@ -9,7 +9,7 @@ public class InvokerTest extends TestCase {
     public void testHelloWorld() throws Exception {
         JRack rack = new InvokerRack("org.jrack.*");
         Context<String> input = new MapContext<String>();
-        input.with(RackEnvironment.PATH_INFO, "org.jrack.examples.HelloWorldRack");
+        input.with(Rack.PATH_INFO, "org.jrack.examples.HelloWorldRack");
         assertNotNull(rack.call(input));
     }
 
@@ -23,7 +23,7 @@ public class InvokerTest extends TestCase {
     private void assertMask(boolean exceptMatch, String mask, String clazz) {
         JRack rack = new InvokerRack(mask);
         Context<String> input = new MapContext<String>();
-        input.with(RackEnvironment.PATH_INFO, clazz);
+        input.with(Rack.PATH_INFO, clazz);
         Exception caught = null;
 
         try {

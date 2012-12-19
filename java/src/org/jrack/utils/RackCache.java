@@ -2,7 +2,7 @@ package org.jrack.utils;
 
 import org.jrack.Context;
 import org.jrack.JRack;
-import org.jrack.RackEnvironment;
+import org.jrack.Rack;
 import org.jrack.RackResponse;
 
 import java.util.HashMap;
@@ -13,7 +13,7 @@ public class RackCache extends JRack {
     private Map<String, RackResponse> caches = new HashMap<String, RackResponse>();
 
     public RackResponse call(Context<String> input) throws Exception {
-        String path = input.get(RackEnvironment.PATH_INFO);
+        String path = input.get(Rack.PATH_INFO);
         RackResponse response = caches.get(path);
         if (response == null) {
             JRack rack = racks.get(path);

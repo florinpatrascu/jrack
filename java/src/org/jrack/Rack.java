@@ -52,6 +52,12 @@ public interface Rack {
     public static final String HTTP_CONTENT_LENGTH = HTTP_ + "Content-Length";
     public static final String HTTP_CONTENT_TYPE = HTTP_ + "Content-Type";
 
+    public static final String REQUEST = "SERVLET_REQUEST";
+    public static final String COOKIES = "COOKIES";
+    public static final String SESSION = "SERVLET_SESSION";
+    public static final String RESPONSE = "SERVLET_RESPONSE";
+
+
     public static final String RACK_VERSION = "rack.version";
     public static final String RACK_URL_SCHEME = "url_scheme";
     public static final String RACK_INPUT = "rack.input";
@@ -59,8 +65,9 @@ public interface Rack {
     public static final String RACK_MULTITHREAD = "rack.multithread";
     public static final String RACK_MULTIPROCESS = "rack.multiprocess";
     public static final String RACK_RUN_ONCE = "rack.run_once";
-    public static final String EMPTY_STRING="";
+    public static final String EMPTY_STRING = "";
     public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
+    public static final String RACK_LOGGER = "rack.logger";
 
     /**
      * The single method implemented by all Rack4Java applications

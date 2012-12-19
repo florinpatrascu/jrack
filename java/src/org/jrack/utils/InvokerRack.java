@@ -2,10 +2,8 @@ package org.jrack.utils;
 
 import org.jrack.Context;
 import org.jrack.JRack;
-import org.jrack.RackEnvironment;
+import org.jrack.Rack;
 import org.jrack.RackResponse;
-
-import java.util.Map;
 
 public class InvokerRack extends JRack {
     public static final String DOT = ".";
@@ -21,7 +19,7 @@ public class InvokerRack extends JRack {
 
     @Override
     public RackResponse call(Context<String> input) throws Exception {
-        String clazz = input.get(RackEnvironment.PATH_INFO);
+        String clazz = input.get(Rack.PATH_INFO);
         clazz = getClasspathFromUrl(clazz);
         assertValidClass(clazz);
         JRack rack = getRack(clazz);

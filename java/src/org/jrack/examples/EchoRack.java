@@ -14,7 +14,7 @@ public class EchoRack extends JRack {
 
     @Override
     public RackResponse call(Context<String> input) throws Exception {
-        HttpServletRequest request = (HttpServletRequest) input.getObject(RackEnvironment.REQUEST);
+        HttpServletRequest request = (HttpServletRequest) input.getObject(Rack.REQUEST);
         return new RackResponse(RackResponseUtils.ReturnCode.OK)
                 .withContentType(CONTENT_TYPE_TEXT_HTML)
                 .withBody(StreamHelper.readAsString(request.getInputStream()));
