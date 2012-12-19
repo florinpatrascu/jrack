@@ -45,28 +45,24 @@ public class RackServlet extends HttpServlet {
         this.rack = rack;
     }
 
-    private void processCall(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void processCall(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
         try {
-            Context<String> response = rack.call(rack.getEnvironment(req));
-            resp.setStatus((Integer) response.getObject(Rack.MESSAGE_STATUS));
+            Context<String> resp = rack.call(rack.getEnvironment(httpRequest));
+            httpResponse.setStatus((Integer) resp.getObject(Rack.MESSAGE_STATUS));
 
-            for (Map.Entry<String, Object> entry : response) {
+            for (Map.Entry<String, Object> entry : resp) {
                 if (entry.getKey().startsWith(Rack.HTTP_)) {
-                    resp.setHeader(entry.getKey().substring(Rack.HTTP_.length()), (String) entry.getValue());
+                    httpResponse.setHeader(entry.getKey().substring(Rack.HTTP_.length()),
+                            (String) entry.getValue());
                 }
             }
-            RackBody body = (RackBody) response.getObject(Rack.MESSAGE_BODY);
-            if (null != body) {
-                // TODO - if type is file, hand it to the server directly, otherwise treat it as a stream
-                // RackBody.Type type = body.getType();
-                for (byte[] bytes : body.getBodyAsBytes()) {
-                    resp.getOutputStream().write(bytes);
-                }
-            }
+
+            RackBody body = (RackBody) resp.getObject(Rack.MESSAGE_BODY);
+            httpResponse.getOutputStream().write(body.getBytes(RackResponse.DEFAULT_ENCODING));
+
         } catch (Exception e) {
             RackServlet.throwAsError(e);
         }
-
     }
 
     @Override
