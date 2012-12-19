@@ -70,6 +70,7 @@ public class RackFilter implements Filter {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
+        response.setCharacterEncoding(RackResponse.DEFAULT_ENCODING);
 
         if (shouldIgnorePath(httpRequest)) {
             if (chain != null) {
