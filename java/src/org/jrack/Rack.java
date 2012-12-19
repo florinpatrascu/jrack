@@ -32,6 +32,9 @@ package org.jrack;
  * @see org.jrack.RackResponse
  */
 public interface Rack {
+    public static final String EMPTY_STRING = "";
+    public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
+
     public static final String REQUEST_METHOD = "REQUEST_METHOD";
     public static final String SCRIPT_NAME = "SCRIPT_NAME";
     public static final String PATH_INFO = "PATH_INFO";
@@ -53,11 +56,10 @@ public interface Rack {
     public static final String HTTP_CONTENT_TYPE = HTTP_ + "Content-Type";
 
     public static final String REQUEST = "SERVLET_REQUEST";
-    public static final String COOKIES = "COOKIES";
-    public static final String SESSION = "SERVLET_SESSION";
     public static final String RESPONSE = "SERVLET_RESPONSE";
+    public static final String COOKIES = "COOKIES";
 
-
+    public static final String RACK_SESSION = "rack.session";
     public static final String RACK_VERSION = "rack.version";
     public static final String RACK_URL_SCHEME = "url_scheme";
     public static final String RACK_INPUT = "rack.input";
@@ -65,14 +67,13 @@ public interface Rack {
     public static final String RACK_MULTITHREAD = "rack.multithread";
     public static final String RACK_MULTIPROCESS = "rack.multiprocess";
     public static final String RACK_RUN_ONCE = "rack.run_once";
-    public static final String EMPTY_STRING = "";
-    public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
     public static final String RACK_LOGGER = "rack.logger";
 
     /**
      * The single method implemented by all Rack4Java applications
      *
-     * @param environment a lightweight "map" of named values combining both the server environment and the HTTP request.
+     * @param environment a lightweight "map" of named values combining both the server
+     *                    environment and the HTTP request.
      * @return a RackResponse object with status code, headers and either a String, byte[] or File payload.
      */
     Context<String> call(Context<String> environment) throws Exception;
