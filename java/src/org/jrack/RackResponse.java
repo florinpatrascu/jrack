@@ -213,7 +213,7 @@ public class RackResponse extends MapContext<String> {
 
         @Override
         public byte[] getBytes(String charset) {
-            throw new NotImplementedException();
+            return body;
         }
 
     }

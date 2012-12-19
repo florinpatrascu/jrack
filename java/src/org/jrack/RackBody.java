@@ -1,6 +1,7 @@
 package org.jrack;
 
 import java.io.File;
+import java.nio.charset.Charset;
 
 public interface RackBody {
     enum Type { file, literal }

@@ -17,6 +17,6 @@ public class EchoRack extends JRack {
         HttpServletRequest request = (HttpServletRequest) input.getObject(Rack.REQUEST);
         return new RackResponse(RackResponseUtils.ReturnCode.OK)
                 .withContentType(CONTENT_TYPE_TEXT_HTML)
-                .withBody(StreamHelper.readAsString(request.getInputStream()));
+                .withBody(StreamHelper.readAsBytes(request.getInputStream()));
     }
 }
