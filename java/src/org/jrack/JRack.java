@@ -11,7 +11,6 @@ import java.util.Enumeration;
 
 public abstract class JRack implements Rack {
     private static final JRackLogger logger = new Slf4jLogger(RackServlet.class.getName());
-
     private static final Context<String> commonEnvironment = new MapContext<String>()
             .with(Rack.RACK_VERSION, Arrays.asList(0, 1))
             .with(Rack.RACK_ERRORS, System.err)
@@ -20,10 +19,14 @@ public abstract class JRack implements Rack {
             .with(Rack.RACK_RUN_ONCE, false)
             .with(Rack.RACK_LOGGER, logger);
 
-    public abstract RackResponse call( Context<String> environment) throws Exception;
+    public Object init(Object config) throws Exception {
+        return null;
+    }
+
+    public abstract RackResponse call(Context<String> environment) throws Exception;
 
     public Context<String> getEnvironment(HttpServletRequest req) {
-        @SuppressWarnings("unchecked") Context<String> environment =new MapContext<String>()
+        @SuppressWarnings("unchecked") Context<String> environment = new MapContext<String>()
                 .with(commonEnvironment);
 
         environment.with(Rack.REQUEST_METHOD, req.getMethod());
