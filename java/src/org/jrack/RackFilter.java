@@ -53,6 +53,7 @@ public class RackFilter implements Filter {
             setRack((JRack) ClassUtilities.loadClass(rackClass).newInstance());
             rack.init(filterConfig);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ServletException("Cannot load: " + rackClass);
         }
     }
