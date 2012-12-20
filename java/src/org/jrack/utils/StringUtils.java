@@ -24,4 +24,28 @@ public class StringUtils {
     public static String nullToEmpty(Object obj) {
         return stringValue(obj, "");
     }
+
+    /**
+     * Convenience method to return a String array as a delimited (e.g. CSV)
+     * String. E.g. useful for <code>toString()</code> implementations.
+     *
+     * @param arr   the array to display
+     * @param delim the delimiter to use (probably a ",")
+     * @return the delimited String
+     */
+    public static String arrayToDelimitedString(Object[] arr, String delim) {
+        if (arr == null || arr.length == 0) {
+            return RackCache.EMPTY_STRING;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < arr.length; i++) {
+            if (i > 0) {
+                sb.append(delim);
+            }
+            sb.append(arr[i]);
+        }
+        return sb.toString();
+    }
+
 }
