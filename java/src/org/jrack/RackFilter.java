@@ -79,6 +79,8 @@ public class RackFilter implements Filter {
                 chain.doFilter(request, response);
             }
         } else {
+            // see Rack specs
+            // - http://rack.rubyforge.org/doc/SPEC.html
             try {
                 Context<String> resp = rack.call(rack.getEnvironment(httpRequest));
                 httpResponse.setStatus((Integer) resp.getObject(Rack.MESSAGE_STATUS));

@@ -30,7 +30,13 @@ public abstract class JRack implements Rack {
                 .with(commonEnvironment);
 
         environment.with(Rack.REQUEST_METHOD, req.getMethod());
-        environment.with(Rack.PATH_INFO, req.getPathInfo());
+        String pathInfo = req.getPathInfo();
+
+        if (pathInfo == null) {
+            pathInfo = req.getServletPath();
+        }
+
+        environment.with(Rack.PATH_INFO, pathInfo);
         environment.with(Rack.QUERY_STRING, req.getQueryString());
         environment.with(Rack.SERVER_NAME, req.getServerName());
         environment.with(Rack.SERVER_PORT, req.getServerPort());
