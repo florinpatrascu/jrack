@@ -3,6 +3,7 @@ package org.jrack;
 import org.jrack.context.MapContext;
 import org.jrack.logging.JRackLogger;
 import org.jrack.logging.Slf4jLogger;
+import org.jrack.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -30,17 +31,17 @@ public abstract class JRack implements Rack {
                 .with(commonEnvironment);
 
         environment.with(Rack.REQUEST_METHOD, req.getMethod());
-        String pathInfo = req.getPathInfo();
-
-        if (pathInfo == null) {
-            pathInfo = req.getServletPath();
-        }
+        final String servletPath = StringUtils.stringValue(req.getServletPath(), JRack.EMPTY_STRING);
+        // better not confusing the Rack client.
+        // String pathInfo = StringUtils.stringValue( req.getPathInfo(), req.getServletPath());
+        // we'll make it EMPTY, as a convenience
+        String pathInfo = StringUtils.stringValue(req.getPathInfo(), JRack.EMPTY_STRING);
 
         environment.with(Rack.PATH_INFO, pathInfo);
         environment.with(Rack.QUERY_STRING, req.getQueryString());
         environment.with(Rack.SERVER_NAME, req.getServerName());
         environment.with(Rack.SERVER_PORT, req.getServerPort());
-        environment.with(Rack.SCRIPT_NAME, req.getServletPath());
+        environment.with(Rack.SCRIPT_NAME, servletPath);
         environment.with(Rack.REQUEST, req);
         environment.with(Rack.COOKIES, req.getCookies());
 
