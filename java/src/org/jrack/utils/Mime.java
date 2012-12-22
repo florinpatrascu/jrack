@@ -623,6 +623,7 @@ public class Mime {
 
 
     public static String mimeType(String ext) {
-        return StringUtils.isBlank(ext) ? DEFAULT_MIME_TYPE : MIME_TYPES.get(ext);
+        return StringUtils.isBlank(ext) ? DEFAULT_MIME_TYPE :
+                StringUtils.stringValue(MIME_TYPES.get(ext), DEFAULT_MIME_TYPE);
     }
 }
