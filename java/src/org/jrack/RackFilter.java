@@ -1,14 +1,14 @@
 package org.jrack;
 
-import org.jrack.logging.JRackLogger;
-import org.jrack.logging.Slf4jLogger;
 import org.jrack.utils.ClassUtilities;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
+import java.nio.channels.Channels;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -94,7 +94,25 @@ public class RackFilter implements Filter {
 
                 RackBody body = (RackBody) resp.getObject(Rack.MESSAGE_BODY);
                 //httpResponse.getWriter().print(rackResponse.getResponse());
-                httpResponse.getOutputStream().write(body.getBytes(RackResponse.DEFAULT_ENCODING));
+                if (body.getType() == RackBody.Type.file) {
+
+                    // Copy.copy(new FileInputStream(body.getBodyAsFile()), httpResponse.getOutputStream());
+                    // or use NIO?
+                    final File file = body.getBodyAsFile();
+                    if (file != null) {
+                        final FileInputStream inputStream = new FileInputStream(file);
+                        try {
+                            inputStream.getChannel()
+                                    .transferTo(0, file.length(),
+                                            Channels.newChannel(httpResponse.getOutputStream()));
+                        } finally {
+                            inputStream.close();
+                        }
+                    }
+
+                } else {
+                    httpResponse.getOutputStream().write(body.getBytes(RackResponse.DEFAULT_ENCODING));
+                }
 
             } catch (Exception e) {
                 RackServlet.throwAsError(e);
