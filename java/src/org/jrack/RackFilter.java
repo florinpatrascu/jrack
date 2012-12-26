@@ -72,7 +72,6 @@ public class RackFilter implements Filter {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-        response.setCharacterEncoding(RackResponse.DEFAULT_ENCODING);
 
         if (shouldIgnorePath(httpRequest)) {
             if (chain != null) {
@@ -111,6 +110,7 @@ public class RackFilter implements Filter {
                     }
 
                 } else {
+                    response.setCharacterEncoding(RackResponse.DEFAULT_ENCODING);
                     httpResponse.getOutputStream().write(body.getBytes(RackResponse.DEFAULT_ENCODING));
                 }
 
