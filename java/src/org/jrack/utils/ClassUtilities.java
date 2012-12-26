@@ -120,11 +120,11 @@ public class ClassUtilities {
         try {
             return cl.loadClass(className);
         } catch (ClassNotFoundException e) {
-            log.warn(className + "; ClassNotFoundException using thread context class loader");
+            // log.warn(className + "; ClassNotFoundException using thread context class loader");
             cl = requestor.getClass().getClassLoader();
             return cl.loadClass(className);
         } catch (SecurityException e) {
-            log.warn(className + "; SecurityException using thread context class loader");
+            // log.warn(className + "; SecurityException using thread context class loader");
             cl = requestor.getClass().getClassLoader();
             return cl.loadClass(className);
         }
