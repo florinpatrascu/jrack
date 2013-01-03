@@ -43,7 +43,7 @@ public abstract class JRack implements Rack {
         environment.with(Rack.SERVER_PORT, req.getServerPort());
         environment.with(Rack.SCRIPT_NAME, servletPath);
         environment.with(Rack.REQUEST, req);
-        environment.with(Rack.RACK_ACCEPT_LOCALE, req.getLocale());
+        environment.with(Rack.RACK_BROWSER_LOCALE, req.getLocale());
         environment.with(Rack.COOKIES, req.getCookies());
 
         @SuppressWarnings("unchecked") Enumeration<String> headers = req.getHeaderNames();

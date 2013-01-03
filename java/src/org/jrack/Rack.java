@@ -50,11 +50,11 @@ public interface Rack {
     public static final String HTTP_HOST = HTTP_ + "Host";
     public static final String HTTP_CONNECTION = HTTP_ + "Connection";
     public static final String HTTP_ACCEPT = HTTP_ + "Accept";
-    public static final String HTTP_ACCEPT_CHARSET = HTTP_ + "Accept-Charset";
-    public static final String HTTP_ACCEPT_ENCODING = HTTP_ + "Accept-Encoding";
+    public static final String HTTP_ACCEPT_CHARSET = HTTP_ACCEPT + "-Charset";
+    public static final String HTTP_ACCEPT_ENCODING = HTTP_ACCEPT + "-Encoding";
+    public static final String HTTP_ACCEPT_LANGUAGE = HTTP_ACCEPT + "-Language";
     public static final String HTTP_CONTENT_LENGTH = HTTP_ + "Content-Length";
     public static final String HTTP_CONTENT_TYPE = HTTP_ + "Content-Type";
-    public static final String HTTP_ACCEPT_LOCALE = HTTP_ACCEPT + "Language";
 
     public static final String REQUEST = "SERVLET_REQUEST";
     public static final String RESPONSE = "SERVLET_RESPONSE";
@@ -69,7 +69,7 @@ public interface Rack {
     public static final String RACK_MULTIPROCESS = "rack.multiprocess";
     public static final String RACK_RUN_ONCE = "rack.run_once";
     public static final String RACK_LOGGER = "rack.logger";
-    public static final String RACK_ACCEPT_LOCALE = "rack.accept.locale";
+    public static final String RACK_BROWSER_LOCALE = "rack.browser.locale";
 
     /**
      * The single method implemented by all Rack4Java applications
