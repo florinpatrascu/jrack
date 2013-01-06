@@ -93,25 +93,30 @@ public class RackFilter implements Filter {
 
                 RackBody body = (RackBody) resp.getObject(Rack.MESSAGE_BODY);
                 //httpResponse.getWriter().print(rackResponse.getResponse());
-                if (body.getType() == RackBody.Type.file) {
+                if(body != null){
+                    if (body.getType() == RackBody.Type.file) {
 
-                    // Copy.copy(new FileInputStream(body.getBodyAsFile()), httpResponse.getOutputStream());
-                    // or use NIO?
-                    final File file = body.getBodyAsFile();
-                    if (file != null) {
-                        final FileInputStream inputStream = new FileInputStream(file);
-                        try {
-                            inputStream.getChannel()
-                                    .transferTo(0, file.length(),
-                                            Channels.newChannel(httpResponse.getOutputStream()));
-                        } finally {
-                            inputStream.close();
+                        // Copy.copy(new FileInputStream(body.getBodyAsFile()), httpResponse.getOutputStream());
+                        // or use NIO?
+                        final File file = body.getBodyAsFile();
+                        if (file != null) {
+                            final FileInputStream inputStream = new FileInputStream(file);
+                            try {
+                                inputStream.getChannel()
+                                        .transferTo(0, file.length(),
+                                                Channels.newChannel(httpResponse.getOutputStream()));
+                            } finally {
+                                inputStream.close();
+                            }
                         }
+
+                    } else {
+                        response.setCharacterEncoding(RackResponse.DEFAULT_ENCODING);
+                        httpResponse.getOutputStream().write(body.getBytes(RackResponse.DEFAULT_ENCODING));
                     }
 
-                } else {
-                    response.setCharacterEncoding(RackResponse.DEFAULT_ENCODING);
-                    httpResponse.getOutputStream().write(body.getBytes(RackResponse.DEFAULT_ENCODING));
+                }else{
+                    httpResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
                 }
 
             } catch (Exception e) {
