@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class JRack implements Rack {
     private static final JRackLogger logger = new Slf4jLogger(RackServlet.class.getName());
@@ -43,6 +45,7 @@ public abstract class JRack implements Rack {
         environment.with(Rack.SERVER_PORT, req.getServerPort());
         environment.with(Rack.SCRIPT_NAME, servletPath);
         environment.with(Rack.REQUEST, req);
+        environment.with(Rack.PARAMS, modifiableRequestParameterMap(req.getParameterMap()));
         environment.with(Rack.RACK_BROWSER_LOCALE, req.getLocale());
         environment.with(Rack.COOKIES, req.getCookies());
 
@@ -60,5 +63,20 @@ public abstract class JRack implements Rack {
         }
 
         return environment;
+    }
+
+    /**
+     * create a new modifiable parameter map that can be updated by the client if need be
+     *
+     * @param parameterMap the request parameters map
+     * @return a new Map<String, String[]> map or null if the parameterMap is empty or null
+     */
+    private Map<String, String[]> modifiableRequestParameterMap(Map parameterMap) {
+        Map<String, String[]> map = null;
+        if (parameterMap != null && !parameterMap.isEmpty()) {
+            map = new HashMap<String, String[]>();
+            map.putAll(parameterMap);
+        }
+        return map;
     }
 }

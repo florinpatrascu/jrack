@@ -70,6 +70,7 @@ public interface Rack {
     public static final String RACK_RUN_ONCE = "rack.run_once";
     public static final String RACK_LOGGER = "rack.logger";
     public static final String RACK_BROWSER_LOCALE = "rack.browser.locale";
+    public static final String PARAMS = "params";
 
     /**
      * The single method implemented by all Rack4Java applications
