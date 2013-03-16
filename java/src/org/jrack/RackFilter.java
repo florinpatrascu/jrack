@@ -40,7 +40,7 @@ public class RackFilter implements Filter {
         String paths = filterConfig.getInitParameter("ignore");
 
         if (paths != null) {
-            String[] parts = paths.split(",");
+            String[] parts = paths.replaceAll(" ", Rack.EMPTY_STRING).split(",");
             for (String path : parts) {
                 path = path.trim();
                 if (path.startsWith("/")) {
@@ -174,7 +174,7 @@ public class RackFilter implements Filter {
 
         if (ignorePaths.size() > 0) {
             String relativePath = getRelativePath(request);
-            if (relativePath != null && relativePath.trim().length() > 0) {
+            if (relativePath != null && relativePath.length() > 0) {
                 for (String path : ignorePaths) {
                     if (relativePath.startsWith(path)) {
                         ignore = true;
