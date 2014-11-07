@@ -1,22 +1,27 @@
 # JRack
 
-A lightweight **Rack** port for the Java Servlet environment, forked from the original [JRack][1].
+A lightweight **Rack** port for the Java Servlet environment, forked from the original [JRack](https://sourceforge.net/projects/approvaltests/files/).
 
 For more information on **Rack**, visit http://rack.rubyforge.org.
 
-# Building
+# Build
 
-Checkout the JRack code and cd to that directory.
+    mvn install
+or:    
 
-    git clone git@github.com:florinpatrascu/jrack.git
-    cd jrack
+    mvn install -Dmaven.test.skip=true
 
-    ant dist
+    
+—————-—————-———-✂︎
+work in progress
+# Pull it from Maven! 
 
-The generated jar should be located here: dist/jrack-*.jar
+Just add these to your __pom.xml__ file:
 
-This is work in progress.
-
-
-[1]: https://sourceforge.net/projects/approvaltests/files/
-
+```xml
+    <dependency>
+      <groupId>org.jrack</groupId>
+      <artifactId>jrack</artifactId>
+      <version>2.0.1</version>
+    </dependency>
+```

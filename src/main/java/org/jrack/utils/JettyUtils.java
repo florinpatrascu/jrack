@@ -1,14 +1,14 @@
 package org.jrack.utils;
 
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.jrack.JRack;
 import org.jrack.RackServlet;
 import org.jrack.examples.EchoRack;
-import org.mortbay.jetty.Connector;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.nio.SelectChannelConnector;
-import org.mortbay.jetty.servlet.ServletHandler;
-import org.mortbay.jetty.servlet.ServletHolder;
-import org.mortbay.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 public class JettyUtils {
     protected static final Logger log = LoggerFactory.getLogger(JettyUtils.class);
     public static final String DEFAULT_SERVER_ADDRESS = "127.0.0.1";
+    public static int DEFAULT_MAX_THREADS = 20;
 
     public static void start(String host, int port, JRack rack) {
         startJettyServer(host, port, new RackServlet(rack));
@@ -30,26 +31,32 @@ public class JettyUtils {
     /**
      * start a simple Jetty server
      *
-     * @param host host address
-     * @param port the port number
+     * @param host    host address
+     * @param port    the port number
      * @param servlet a rack Servlet
      */
     private static void startJettyServer(String host, int port, RackServlet servlet) {
+        // see: http://blog.softwaredemo.com/2014/02/06/embedded-jetty-how-to-upgrade-from-version-6-to-9/ for more hints
         try {
+            Server server = new Server(new QueuedThreadPool(DEFAULT_MAX_THREADS));
+            ServerConnector connector = new ServerConnector(server);
 
-            SelectChannelConnector connector = new SelectChannelConnector();
             connector.setHost(host);
             connector.setPort(port);
-            connector.setThreadPool(new QueuedThreadPool(20));
+            connector.setIdleTimeout(1000 * 60 * 60);
+            connector.setSoLingerTime(-1);
 
-            Server server = new Server(port);
-            server.setConnectors(new Connector[]{connector});
+            ServletHolder servletHolder = new ServletHolder(servlet);
+            //servletHolder.setInitParameter("foo", "bar");
 
-            ServletHandler handler = new ServletHandler();
-            handler.addServletWithMapping(new ServletHolder(servlet), "/*");
-            server.setHandler(handler);
+            ServletContextHandler ctxHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+            ctxHandler.setContextPath("/");
+            ctxHandler.addServlet(servletHolder, "/echo");
+
+            server.setConnectors(new Connector[] {connector});
+            server.setHandler(ctxHandler);
             server.start();
-            server.join();
+//            server.join();
 
         } catch (Exception e) {
             e.printStackTrace();

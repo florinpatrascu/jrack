@@ -1,8 +1,10 @@
 package org.jrack;
 
-import org.jrack.logging.JRackLogger;
-import org.jrack.logging.Slf4jLogger;
-import org.jrack.utils.ClassUtilities;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.channels.Channels;
+import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -11,8 +13,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Map;
+
+import org.jrack.logging.JRackLogger;
+import org.jrack.logging.Slf4jLogger;
+import org.jrack.utils.ClassUtilities;
 
 public class RackServlet extends HttpServlet {
     private JRackLogger logger = new Slf4jLogger(RackServlet.class.getName());
@@ -29,7 +33,12 @@ public class RackServlet extends HttpServlet {
         try {
             setRack((JRack) ClassUtilities.loadClass(rackClass).newInstance());
         } catch (Exception e) {
-            throw new ServletException("Cannot load: " + rackClass);
+            if (this.rack == null) {
+                throw new ServletException("Cannot load the 'rack' implementation: " + rackClass);
+            } else {
+                rackClass = this.rack.getClass().getCanonicalName();
+                logger.log(String.format("this 'rack' is using: %s", rackClass));
+            }
         }
 
         logger.log(String.format("%s; active ....", rackClass));
@@ -53,12 +62,33 @@ public class RackServlet extends HttpServlet {
             for (Map.Entry<String, Object> entry : resp) {
                 if (entry.getKey().startsWith(Rack.HTTP_)) {
                     httpResponse.setHeader(entry.getKey().substring(Rack.HTTP_.length()),
-                            (String) entry.getValue());
+                                           (String) entry.getValue());
                 }
             }
 
             RackBody body = (RackBody) resp.getObject(Rack.MESSAGE_BODY);
-            httpResponse.getOutputStream().write(body.getBytes(RackResponse.DEFAULT_ENCODING));
+            //httpResponse.getWriter().print(rackResponse.getResponse());
+            if (body != null) {
+                if (body.getType() == RackBody.Type.file) {
+
+                    // Copy.copy(new FileInputStream(body.getBodyAsFile()), httpResponse.getOutputStream());
+                    // or use NIO?
+                    final File file = body.getBodyAsFile();
+                    if (file != null) {
+                        try (FileInputStream inputStream = new FileInputStream(file)) {
+                            inputStream.getChannel()
+                                    .transferTo(0, file.length(), Channels.newChannel(httpResponse.getOutputStream()));
+                        }
+                    }
+
+                } else {
+                    httpResponse.setCharacterEncoding(RackResponse.DEFAULT_ENCODING);
+                    httpResponse.getOutputStream().write(body.getBytes(RackResponse.DEFAULT_ENCODING));
+                }
+
+            } else {
+                httpResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            }
 
         } catch (Exception e) {
             RackServlet.throwAsError(e);

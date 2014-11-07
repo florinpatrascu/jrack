@@ -1,10 +1,5 @@
 package org.jrack;
 
-import org.jrack.utils.ClassUtilities;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,6 +7,18 @@ import java.nio.channels.Channels;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.jrack.utils.ClassUtilities;
 
 /**
  * @author <a href="mailto:florin.patrascu@gmail.com">Florin T.PATRASCU</a>
@@ -40,7 +47,7 @@ public class RackFilter implements Filter {
         String paths = filterConfig.getInitParameter("ignore");
 
         if (paths != null) {
-            String[] parts = paths.split(",");
+            String[] parts = paths.replaceAll(" ", Rack.EMPTY_STRING).split(",");
             for (String path : parts) {
                 path = path.trim();
                 if (path.startsWith("/")) {
@@ -87,26 +94,23 @@ public class RackFilter implements Filter {
                 for (Map.Entry<String, Object> entry : resp) {
                     if (entry.getKey().startsWith(Rack.HTTP_)) {
                         httpResponse.setHeader(entry.getKey().substring(Rack.HTTP_.length()),
-                                (String) entry.getValue());
+                                               (String) entry.getValue());
                     }
                 }
 
                 RackBody body = (RackBody) resp.getObject(Rack.MESSAGE_BODY);
                 //httpResponse.getWriter().print(rackResponse.getResponse());
-                if(body != null){
+                if (body != null) {
                     if (body.getType() == RackBody.Type.file) {
 
                         // Copy.copy(new FileInputStream(body.getBodyAsFile()), httpResponse.getOutputStream());
                         // or use NIO?
                         final File file = body.getBodyAsFile();
                         if (file != null) {
-                            final FileInputStream inputStream = new FileInputStream(file);
-                            try {
+                            try (FileInputStream inputStream = new FileInputStream(file)) {
                                 inputStream.getChannel()
                                         .transferTo(0, file.length(),
-                                                Channels.newChannel(httpResponse.getOutputStream()));
-                            } finally {
-                                inputStream.close();
+                                                    Channels.newChannel(httpResponse.getOutputStream()));
                             }
                         }
 
@@ -115,7 +119,7 @@ public class RackFilter implements Filter {
                         httpResponse.getOutputStream().write(body.getBytes(RackResponse.DEFAULT_ENCODING));
                     }
 
-                }else{
+                } else {
                     httpResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
                 }
 
@@ -174,7 +178,7 @@ public class RackFilter implements Filter {
 
         if (ignorePaths.size() > 0) {
             String relativePath = getRelativePath(request);
-            if (relativePath != null && relativePath.trim().length() > 0) {
+            if (relativePath != null && relativePath.length() > 0) {
                 for (String path : ignorePaths) {
                     if (relativePath.startsWith(path)) {
                         ignore = true;

@@ -1,16 +1,17 @@
 package org.jrack;
 
-import org.jrack.context.MapContext;
-import org.jrack.logging.JRackLogger;
-import org.jrack.logging.Slf4jLogger;
-import org.jrack.utils.StringUtils;
-
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.jrack.context.MapContext;
+import org.jrack.logging.JRackLogger;
+import org.jrack.logging.Slf4jLogger;
+import org.jrack.utils.StringUtils;
 
 public abstract class JRack implements Rack {
     private static final JRackLogger logger = new Slf4jLogger(RackServlet.class.getName());
@@ -45,6 +46,13 @@ public abstract class JRack implements Rack {
         environment.with(Rack.SERVER_PORT, req.getServerPort());
         environment.with(Rack.SCRIPT_NAME, servletPath);
         environment.with(Rack.REQUEST, req);
+
+        try {
+            environment.with(Rack.RACK_INPUT, req.getInputStream());
+        } catch (IOException e) {
+            environment.with(Rack.RACK_INPUT, null);
+        }
+
         environment.with(Rack.PARAMS, modifiableRequestParameterMap(req.getParameterMap()));
         environment.with(Rack.RACK_BROWSER_LOCALE, req.getLocale());
         environment.with(Rack.COOKIES, req.getCookies());
@@ -56,11 +64,6 @@ public abstract class JRack implements Rack {
         }
 
         environment.with(Rack.RACK_URL_SCHEME, req.getScheme());
-        try {
-            environment.with(Rack.RACK_INPUT, req.getInputStream());
-        } catch (IOException e) {
-            environment.with(Rack.RACK_INPUT, null);
-        }
 
         return environment;
     }

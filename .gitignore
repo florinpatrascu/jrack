@@ -1,6 +1,8 @@
 *.iml
-*.ipr
-*.iws
+*.idea
+
+# Binaries
+target
 build/
 dist/
 out/
