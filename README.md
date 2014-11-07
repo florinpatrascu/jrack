@@ -2,7 +2,7 @@
 
 A lightweight **Rack** port for the Java Servlet environment, forked from the original [JRack](https://sourceforge.net/projects/approvaltests/files/).
 
-For more information on **Rack**, visit http://rack.rubyforge.org.
+For more information on **Rack**, visit http://rack.github.io.
 
 # Build
 
