@@ -21,8 +21,8 @@
     </license>
   </licenses>
   <scm>
-    <connection>scm:git:git@github.com:florinpatrascu/jrack.git</connection>
-    <developerConnection>scm:git:git@github.com:florinpatrascu/jrack.git</developerConnection>
+    <connection>scm:git:ssh@github.com:florinpatrascu/jrack.git</connection>
+    <developerConnection>scm:git:ssh@github.com:florinpatrascu/jrack.git</developerConnection>
     <url>scm:git:git@github.com:florinpatrascu/jrack.git</url>
   </scm>
   <developers>
@@ -31,6 +31,7 @@
   <properties>
     <jetty.version>9.0.2.v20130417</jetty.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <github.global.server>github</github.global.server>
   </properties>
 
   <dependencies>
@@ -82,7 +83,20 @@
       <artifactId>snakeyaml</artifactId>
       <version>1.14</version>
     </dependency>
+    <dependency>
+      <groupId>com.github.github</groupId>
+      <artifactId>site-maven-plugin</artifactId>
+      <version>0.10</version>
+    </dependency>
   </dependencies>
+
+  <distributionManagement>
+    <repository>
+      <id>internal.repo</id>
+      <name>Temporary Staging Repository</name>
+      <url>file://${project.build.directory}/mvn-repo</url>
+    </repository>
+  </distributionManagement>
 
   <build>
     <resources>
@@ -102,7 +116,16 @@
       </resource>
     </resources>
 
+
     <plugins>
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.8.1</version>
+        <configuration>
+          <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo
+          </altDeploymentRepository>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -149,6 +172,36 @@
         <version>2.9.1</version>
         <configuration>
         </configuration>
+      </plugin>
+
+
+      <!-- With the help from:
+       ~ http://stackoverflow.com/questions/14013644/hosting-a-maven-repository-on-github
+       ~ Thank you!
+       -->
+      <plugin>
+        <groupId>com.github.github</groupId>
+        <artifactId>site-maven-plugin</artifactId>
+        <version>0.10</version>
+        <configuration>
+          <message>Maven artifacts for ${project.version}</message>
+          <noJekyll>true</noJekyll>
+          <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
+          <branch>refs/heads/mvn-repo</branch>
+          <includes>
+            <include>**/*</include>
+          </includes>
+          <repositoryName>jrack</repositoryName>
+          <repositoryOwner>florinpatrascu</repositoryOwner>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>site</goal>
+            </goals>
+            <phase>deploy</phase>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
