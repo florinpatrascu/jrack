@@ -20,7 +20,7 @@ Just add these to your __pom.xml__ file:
       <dependency>
         <groupId>org.jrack</groupId>
         <artifactId>jrack</artifactId>
-        <version>2.0.1-SNAPSHOT</version>
+        <version>2.0.2</version>
       </dependency>
 ```
 
