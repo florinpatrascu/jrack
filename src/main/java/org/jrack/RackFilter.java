@@ -84,7 +84,7 @@ public class RackFilter implements Filter {
       // - http://rack.rubyforge.org/doc/SPEC.html
       try {
         Context<String> resp = rack.call(rack.getEnvironment(httpRequest).with(Rack.FILTER_CHAIN, chain));
-        if (skipWord != null && httpRequest.getAttribute(skipWord) == null) {
+        if (skipWord == null || httpRequest.getAttribute(skipWord) == null) {
 
           httpResponse.setStatus((Integer) resp.getObject(Rack.MESSAGE_STATUS));
 
